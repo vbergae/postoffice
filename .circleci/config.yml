@@ -12,6 +12,7 @@ jobs:
           DB_NAME: postoffice_dev
           DB_PORT: 5432
           GCLOUD_PUBSUB_CREDENTIALS_PATH: /home/circleci/repo/config/dummy-credentials.json
+          GCLOUD_PUBSUB_PROJECT: test
 
       # Required database
       - image: circleci/postgres:12.0-alpine
