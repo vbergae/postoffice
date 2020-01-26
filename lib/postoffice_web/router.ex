@@ -28,6 +28,7 @@ defmodule PostofficeWeb.Router do
     resources "/publishers", PublisherController, only: [:index, :new, :create, :edit, :update]
 
     resources "/messages", MessageController, only: [:index, :show]
+    resources "/topics", TopicController, only: [:index, :new]
   end
 
   scope "/api", PostofficeWeb, as: :api do
