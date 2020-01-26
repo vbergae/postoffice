@@ -30,18 +30,17 @@ defmodule Postoffice.PublisherProducer do
   def handle_info(:populate_state, {queue, pending_demand} = state) do
     Process.send_after(self(), :populate_state, @repopulate_state_interval)
 
-    if :queue.len(queue) < 25 do
-      publishers = Messaging.list_enabled_publishers()
+    {events, state} =
+      case :queue.len(queue) < 25 do
+        true ->
+          Messaging.list_enabled_publishers()
+          |> Enum.reduce(queue, &:queue.in/2)
+          |> Dispatch.dispatch_events(pending_demand, [])
 
-      queue =
-        Enum.reduce(publishers, queue, fn publisher, acc ->
-          :queue.in(publisher, acc)
-        end)
+        false ->
+          {[], state}
+      end
 
-      {events, state} = Dispatch.dispatch_events(queue, pending_demand, [])
-      {:noreply, events, state}
-    else
-      {:noreply, [], state}
-    end
+    {:noreply, events, state}
   end
 end
